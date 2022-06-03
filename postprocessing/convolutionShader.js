@@ -2,11 +2,6 @@ import {
     Vector2
 } from 'three'
 
-/**
- * Convolution shader
- * ported from o3d sample to WebGL / GLSL
- */
-
 const ConvolutionShader = {
 
     defines: {
@@ -24,7 +19,7 @@ const ConvolutionShader = {
 
     },
 
-    vertexShader: /* glsl */`
+    vertexShader: `
 
 		uniform vec2 uImageIncrement;
 
@@ -37,7 +32,7 @@ const ConvolutionShader = {
 
 		}`,
 
-    fragmentShader: /* glsl */`
+    fragmentShader: `
 
 		uniform float cKernel[ KERNEL_SIZE_INT ];
 
@@ -64,8 +59,6 @@ const ConvolutionShader = {
 
     buildKernel: function ( sigma ) {
 
-        // We lop off the sqrt(2 * pi) * sigma term, since we're going to normalize anyway.
-
         const kMaxKernelSize = 25;
         let kernelSize = 2 * Math.ceil( sigma * 3.0 ) + 1;
 
@@ -81,8 +74,6 @@ const ConvolutionShader = {
             sum += values[ i ];
 
         }
-
-        // normalize the kernel
 
         for ( let i = 0; i < kernelSize; ++ i ) values[ i ] /= sum;
 

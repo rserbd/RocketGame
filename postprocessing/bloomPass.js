@@ -17,16 +17,12 @@ class BloomPass extends Pass {
 
         super();
 
-        // render targets
-
         const pars = { minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat };
 
         this.renderTargetX = new WebGLRenderTarget( resolution, resolution, pars );
         this.renderTargetX.texture.name = 'BloomPass.x';
         this.renderTargetY = new WebGLRenderTarget( resolution, resolution, pars );
         this.renderTargetY.texture.name = 'BloomPass.y';
-
-        // copy material
 
         if ( CopyShader === undefined ) console.error( 'THREE.BloomPass relies on CopyShader' );
 
@@ -45,8 +41,6 @@ class BloomPass extends Pass {
             transparent: true
 
         } );
-
-        // convolution material
 
         if ( ConvolutionShader === undefined ) console.error( 'THREE.BloomPass relies on ConvolutionShader' );
 
@@ -79,8 +73,6 @@ class BloomPass extends Pass {
 
         if ( maskActive ) renderer.state.buffers.stencil.setTest( false );
 
-        // Render quad with blured scene into texture (convolution pass 1)
-
         this.fsQuad.material = this.materialConvolution;
 
         this.convolutionUniforms[ 'tDiffuse' ].value = readBuffer.texture;
@@ -90,17 +82,12 @@ class BloomPass extends Pass {
         renderer.clear();
         this.fsQuad.render( renderer );
 
-
-        // Render quad with blured scene into texture (convolution pass 2)
-
         this.convolutionUniforms[ 'tDiffuse' ].value = this.renderTargetX.texture;
         this.convolutionUniforms[ 'uImageIncrement' ].value = BloomPass.blurY;
 
         renderer.setRenderTarget( this.renderTargetY );
         renderer.clear();
         this.fsQuad.render( renderer );
-
-        // Render original scene with superimposed blur to texture
 
         this.fsQuad.material = this.materialCopy;
 

@@ -16,13 +16,6 @@ import {
 	Mesh
 } from 'three';
 
-/**
- * Work based on :
- * https://github.com/Slayvin: Flat mirror for three.js
- * https://home.adelphi.edu/~stemkoski/ : An implementation of water shader based on the flat mirror
- * http://29a.ch/ && http://29a.ch/slides/2012/webglwater/ : Water shader explanations in WebGL
- */
-
 class Water extends Mesh {
 
 	constructor( geometry, options = {} ) {
@@ -107,7 +100,6 @@ class Water extends Mesh {
 			fragmentShader: require('./shaders/waterFragmentShader.glsl').default
 
 		};
-		// debugger;
 
 		const material = new ShaderMaterial( {
 			fragmentShader: mirrorShader.fragmentShader,
@@ -136,7 +128,6 @@ class Water extends Mesh {
 		scope.onBeforeRender = function ( renderer, scene, camera ) {
 
 			accumulator += 1;
-			// console.log(accumulator);
 
 			mirrorWorldPosition.setFromMatrixPosition( scope.matrixWorld );
 			cameraWorldPosition.setFromMatrixPosition( camera.matrixWorld );
@@ -147,9 +138,6 @@ class Water extends Mesh {
 			normal.applyMatrix4( rotationMatrix );
 
 			view.subVectors( mirrorWorldPosition, cameraWorldPosition );
-			// view.negate();
-
-			// Avoid rendering when mirror is facing away
 
 			if ( view.dot( normal ) > 0 ) return;
 
@@ -161,7 +149,6 @@ class Water extends Mesh {
 			lookAtPosition.set( 0, 0, - 1 );
 			lookAtPosition.applyMatrix4( rotationMatrix );
 			lookAtPosition.add( cameraWorldPosition );
-			// lookAtPosition.add(new Vector3(0,0,-accumulator));
 
 			target.subVectors( mirrorWorldPosition, lookAtPosition );
 			target.reflect( normal ).negate();
@@ -173,12 +160,11 @@ class Water extends Mesh {
 			mirrorCamera.up.reflect( normal );
 			mirrorCamera.lookAt( target );
 
-			mirrorCamera.far = camera.far; // Used in WebGLBackground
+			mirrorCamera.far = camera.far; 
 
 			mirrorCamera.updateMatrixWorld();
 			mirrorCamera.projectionMatrix.copy( camera.projectionMatrix );
 
-			// Update the texture matrix
 			textureMatrix.set(
 				0.5, 0.0, 0.0, 0.5,
 				0.0, 0.5, 0.0, 0.5,
@@ -188,8 +174,6 @@ class Water extends Mesh {
 			textureMatrix.multiply( mirrorCamera.projectionMatrix );
 			textureMatrix.multiply( mirrorCamera.matrixWorldInverse );
 
-			// Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
-			// Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
 			mirrorPlane.setFromNormalAndCoplanarPoint( normal, mirrorWorldPosition );
 			mirrorPlane.applyMatrix4( mirrorCamera.matrixWorldInverse );
 
@@ -202,18 +186,14 @@ class Water extends Mesh {
 			q.z = - 1.0;
 			q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
 
-			// Calculate the scaled plane vector
 			clipPlane.multiplyScalar( 2.0 / clipPlane.dot( q ) );
 
-			// Replacing the third row of the projection matrix
 			projectionMatrix.elements[ 2 ] = clipPlane.x;
 			projectionMatrix.elements[ 6 ] = clipPlane.y;
 			projectionMatrix.elements[ 10 ] = clipPlane.z + 1.0 - clipBias;
 			projectionMatrix.elements[ 14 ] = clipPlane.w;
 
 			eye.setFromMatrixPosition( camera.matrixWorld );
-
-			// Render
 
 			const currentRenderTarget = renderer.getRenderTarget();
 
@@ -222,12 +202,12 @@ class Water extends Mesh {
 
 			scope.visible = false;
 
-			renderer.xr.enabled = false; // Avoid camera modification and recursion
-			renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
+			renderer.xr.enabled = false; 
+			renderer.shadowMap.autoUpdate = false; 
 
 			renderer.setRenderTarget( renderTarget );
 
-			renderer.state.buffers.depth.setMask( true ); // make sure the depth buffer is writable so it can be properly cleared, see #18897
+			renderer.state.buffers.depth.setMask( true ); 
 
 			if ( renderer.autoClear === false ) renderer.clear();
 			renderer.render( scene, mirrorCamera );
@@ -239,8 +219,6 @@ class Water extends Mesh {
 
 			renderer.setRenderTarget( currentRenderTarget );
 
-			// Restore viewport
-
 			const viewport = camera.viewport;
 
 			if ( viewport !== undefined ) {
@@ -250,7 +228,6 @@ class Water extends Mesh {
 			}
 
 		};
-		// this.rotation = undefined;
 
 	}
 

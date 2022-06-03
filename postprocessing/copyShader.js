@@ -1,6 +1,4 @@
-/**
- * Full-screen textured quad shader
- */
+
 
 var CopyShader = {
 
@@ -11,7 +9,7 @@ var CopyShader = {
 
     },
 
-    vertexShader: /* glsl */`
+    vertexShader: `
 
 		varying vec2 vUv;
 
@@ -22,7 +20,7 @@ var CopyShader = {
 
 		}`,
 
-    fragmentShader: /* glsl */`
+    fragmentShader: `
 
 		uniform float opacity;
 

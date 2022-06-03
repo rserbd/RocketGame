@@ -2,11 +2,12 @@
     "compilerOptions": {
         "moduleResolution": "node",
         "strict": true,
-        "allowJs": true,
+        "allowJs": false,
         "checkJs": false,
         "target": "es2017",
       "module": "commonjs"
 
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules", "build/**/*"]
 }

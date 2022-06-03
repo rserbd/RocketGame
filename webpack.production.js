@@ -13,7 +13,7 @@ module.exports = merge(common, {
     ],
     resolve: {
         plugins: [
-            threeMinifier.resolver, // <=== (2) Add resolver on the FIRST line
+            threeMinifier.resolver,
         ]
     },
 
